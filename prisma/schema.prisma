@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  displayName  String
+  avatar       String   @default("fox")
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions   Session[]
+  workouts   Workout[]
+  biometrics BiometricsWeekly[]
+  nutritions NutritionDaily[]
+  targets    Target[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Exercise {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  pattern             String   // push/pull/hinge/squat/core
+  equipment           String
+  defaultRepRangeMin  Int
+  defaultRepRangeMax  Int
+  progressionPolicyId String?
+  videoUrl            String?  // YouTube or other video URL
+  imageUrl            String?  // Exercise image URL
+  instructions        String?  // Form instructions
+  targetMuscles       String?  // Comma-separated muscle groups
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  sets Set[]
+}
+
+model Workout {
+  id        String   @id @default(cuid())
+  userId    String?
+  date      DateTime @default(now())
+  template  String   // "A" or "B"
+  duration  Int?     // minutes
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  sets Set[]
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Set {
+  id              String   @id @default(cuid())
+  workoutId       String
+  exerciseId      String
+  setIndex        Int
+  reps            Int
+  loadLbs         Float?
+  rir             Int?     // Reps in Reserve
+  tempoEccSec     Int?     // Eccentric seconds
+  tempoPauseSec   Int?     // Pause seconds
+  tempoConcSec    Int?     // Concentric seconds
+  technique       String?  // none/restpause/myoreps/partials
+  notes           String?
+  createdAt       DateTime @default(now())
+  
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise  Exercise @relation(fields: [exerciseId], references: [id])
+  
+  @@index([workoutId])
+  @@index([exerciseId])
+}
+
+model BiometricsWeekly {
+  id        String   @id @default(cuid())
+  userId    String?
+  date      DateTime @default(now())
+  weightKg  Float
+  bfPercent Float?
+  lbmKg     Float?
+  bmi       Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model NutritionDaily {
+  id         String   @id @default(cuid())
+  userId     String?
+  date       DateTime @default(now())
+  calories   Int
+  proteinG   Int
+  carbsG     Int
+  fatG       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+}
+
+model Target {
+  id              String   @id @default(cuid())
+  userId          String?
+  effectiveDate   DateTime @default(now())
+  caloriesTarget  Int
+  proteinTarget   Int
+  workoutFrequency Int
+  deloadFlag      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, effectiveDate])
+}

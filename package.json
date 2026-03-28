@@ -1,0 +1,52 @@
+{
+  "name": "hypergamer",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Progression-focused workout tracker for lifters training with limited equipment.",
+  "license": "MIT",
+  "author": "M. M. Rokku",
+  "keywords": [
+    "nextjs",
+    "fitness",
+    "workout-tracker",
+    "strength-training",
+    "prisma",
+    "sqlite"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "NEXT_DISABLE_GOOGLE_FONTS=1 next dev -p 3001 --hostname 127.0.0.1 --webpack",
+    "dev:lan": "NEXT_DISABLE_GOOGLE_FONTS=1 next dev -p 3001 --hostname 0.0.0.0 --webpack",
+    "build": "next build",
+    "start": "HOSTNAME=${HOSTNAME:-0.0.0.0} PORT=${PORT:-3001} node .next/standalone/server.js",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "db:push": "node scripts/prepare-sqlite-path.js && DATABASE_URL=${DATABASE_URL:-file:./muscle_app.db} prisma db push",
+    "db:studio": "prisma studio",
+    "db:generate": "DATABASE_URL=${DATABASE_URL:-file:./muscle_app.db} prisma generate",
+    "codex": "codex"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "next": "^16.1.5",
+    "nodemailer": "^8.0.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@openai/codex": "^0.89.0",
+    "@types/node": "^20.14.12",
+    "@types/nodemailer": "^7.0.11",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "postcss": "^8.4.40",
+    "prisma": "^5.20.0",
+    "tailwindcss": "^3.4.7",
+    "typescript": "^5.5.4"
+  }
+}
