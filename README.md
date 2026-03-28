@@ -105,6 +105,4 @@ The import flow includes a generic example table only. Bring your own data when 
 
 ## Support
 
-If HyperGamer is useful and you want to support continued work, you can donate via email:
-
-- [marcelo.mm.martins@gmail.com](mailto:marcelo.mm.martins@gmail.com?subject=HyperGamer%20donation)
+If HyperGamer is useful and you want to support continued work, donations are appreciated.
